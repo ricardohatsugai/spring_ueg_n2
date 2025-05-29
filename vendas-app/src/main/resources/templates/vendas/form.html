@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Formulário de Venda</h2>
+<form th:action="@{/vendas/save}" th:object="${venda}" method="post" class="form-container">
+  <input type="hidden" th:field="*{id}" />
+  <input type="hidden" th:field="*{data}" /> <input type="hidden" th:field="*{total}" /> <div class="form-group">
+  <label for="cliente">Cliente:</label>
+  <select id="cliente" th:field="*{cliente.id}" class="form-control">
+    <option value="">Selecione um cliente</option>
+    <option th:each="clienteOpt : ${clientes}" th:value="${clienteOpt.id}" th:text="${clienteOpt.nome}"></option>
+  </select>
+  <span th:if="${#fields.hasErrors('cliente')}" th:errors="*{cliente}" class="text-danger"></span>
+</div>
+
+  <div class="form-group">
+    <label for="pagamento">Método de Pagamento:</label>
+    <select id="pagamento" th:field="*{pagamento.id}" class="form-control">
+      <option value="">Selecione um método de pagamento</option>
+      <option th:each="pagamentoOpt : ${pagamentos}" th:value="${pagamentoOpt.id}" th:text="${pagamentoOpt.pagamento}"></option>
+    </select>
+    <span th:if="${#fields.hasErrors('pagamento')}" th:errors="*{pagamento}" class="text-danger"></span>
+  </div>
+
+  <div class="form-group">
+    <label for="observacao">Observação:</label>
+    <textarea id="observacao" th:field="*{observacao}" class="form-control"></textarea>
+    <span th:if="${#fields.hasErrors('observacao')}" th:errors="*{observacao}" class="text-danger"></span>
+  </div>
+
+  <h3>Itens da Venda</h3>
+  <div id="itensVendaContainer">
+    <div th:each="item, itemStat : *{itensVenda}" class="item-venda-group">
+      <input type="hidden" th:field="*{itensVenda[__${itemStat.index}__].id}" />
+      <input type="hidden" th:field="*{itensVenda[__${itemStat.index}__].valor}" />
+      <input type="hidden" th:field="*{itensVenda[__${itemStat.index}__].valorTotal}" />
+
+      <div class="form-group">
+        <label th:for="${'produto' + itemStat.index}">Produto:</label>
+        <select th:id="${'produto' + itemStat.index}" th:field="*{itensVenda[__${itemStat.index}__].produto.id}" class="form-control">
+          <option value="">Selecione um produto</option>
+          <option th:each="produtoOpt : ${produtos}" th:value="${produtoOpt.id}" th:text="${produtoOpt.descricao + ' (Estoque: ' + produtoOpt.quantidade + ')'}"></option>
+        </select>
+        <span th:if="${#fields.hasErrors('itensVenda[' + itemStat.index + '].produto')}" th:errors="*{itensVenda[__${itemStat.index}__].produto}" class="text-danger"></span>
+      </div>
+
+      <div class="form-group">
+        <label th:for="${'quantidade' + itemStat.index}">Quantidade:</label>
+        <input type="number" th:id="${'quantidade' + itemStat.index}" th:field="*{itensVenda[__${itemStat.index}__].quantidade}" class="form-control" min="1"/>
+        <span th:if="${#fields.hasErrors('itensVenda[' + itemStat.index + '].quantidade')}" th:errors="*{itensVenda[__${itemStat.index}__].quantidade}" class="text-danger"></span>
+      </div>
+
+      <button type="button" class="btn btn-danger remove-item-btn" th:attr="data-index=${itemStat.index}">Remover Item</button>
+    </div>
+  </div>
+
+  <button type="button" id="addItemBtn" class="btn btn-info">Adicionar Item</button>
+
+  <button type="submit" class="btn btn-success">Salvar Venda</button>
+  <a href="/vendas" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<script th:inline="javascript">
+  // Script para adicionar e remover dinamicamente itens de venda no formulário
+  document.addEventListener('DOMContentLoaded', function() {
+      const addItemBtn = document.getElementById('addItemBtn');
+      const itensVendaContainer = document.getElementById('itensVendaContainer');
+      let itemIndex = [[${#lists.size(venda.itensVenda)}]]; // Começa com o próximo índice disponível
+
+      addItemBtn.addEventListener('click', function() {
+          const newItemHtml = `
+              <div class="item-venda-group">
+                  <input type="hidden" name="itensVenda[${itemIndex}].id" value="" />
+                  <input type="hidden" name="itensVenda[${itemIndex}].valor" value="0.00" />
+                  <input type="hidden" name="itensVenda[${itemIndex}].valorTotal" value="0.00" />
+
+                  <div class="form-group">
+                      <label for="produto${itemIndex}">Produto:</label>
+                      <select id="produto${itemIndex}" name="itensVenda[${itemIndex}].produto.id" class="form-control">
+                          <option value="">Selecione um produto</option>
+                          <option th:each="produtoOpt : ${produtos}" th:value="${produtoOpt.id}" th:text="${produtoOpt.descricao + ' (Estoque: ' + produtoOpt.quantidade + ')'}"></option>
+                      </select>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="quantidade${itemIndex}">Quantidade:</label>
+                      <input type="number" id="quantidade${itemIndex}" name="itensVenda[${itemIndex}].quantidade" class="form-control" min="1" value="1"/>
+                  </div>
+
+                  <button type="button" class="btn btn-danger remove-item-btn" data-index="${itemIndex}">Remover Item</button>
+              </div>
+          `;
+          // Cria um elemento temporário para parsear o HTML e inserir no DOM
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = newItemHtml;
+          const newItemGroup = tempDiv.firstElementChild;
+          itensVendaContainer.appendChild(newItemGroup);
+
+          // Re-inicializa o Thymeleaf para processar os novos elementos (se necessário, mas geralmente não para campos simples)
+          // Para tornar as opções de produto dinâmicas, você precisaria de uma chamada AJAX ou injetar todos os produtos no JS.
+          // Por simplicidade, as opções de produto são carregadas estaticamente no template inicial.
+          // Se o usuário adicionar um item, as opções de produto já estarão disponíveis no select.
+
+          itemIndex++; // Incrementa o índice para o próximo item
+          attachRemoveListeners(); // Anexa listeners aos novos botões de remoção
+      });
+
+      // Função para anexar listeners aos botões de remoção
+      function attachRemoveListeners() {
+          document.querySelectorAll('.remove-item-btn').forEach(button => {
+              button.onclick = function() {
+                  this.closest('.item-venda-group').remove();
+                  // Reindexar os campos após a remoção (opcional, mas boa prática para evitar lacunas nos índices)
+                  reindexItems();
+              };
+          });
+      }
+
+      // Função para reindexar os campos após a remoção de um item
+      function reindexItems() {
+          const itemGroups = itensVendaContainer.querySelectorAll('.item-venda-group');
+          itemIndex = 0; // Resetar o índice para recontar
+          itemGroups.forEach((group, newIndex) => {
+              group.querySelectorAll('[name^="itensVenda"]').forEach(input => {
+                  const oldName = input.getAttribute('name');
+                  const newName = oldName.replace(/itensVenda\[\d+\]/, `itensVenda[${newIndex}]`);
+                  input.setAttribute('name', newName);
+              });
+              group.querySelectorAll('[id^="produto"], [id^="quantidade"]').forEach(input => {
+                  const oldId = input.getAttribute('id');
+                  const newId = oldId.replace(/\d+/, `${newIndex}`);
+                  input.setAttribute('id', newId);
+              });
+              group.querySelector('.remove-item-btn').setAttribute('data-index', newIndex);
+              itemIndex++;
+          });
+      }
+
+      attachRemoveListeners(); // Anexa listeners aos botões existentes no carregamento da página
+  });
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

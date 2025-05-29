@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Lista de Produtos</h2>
+<a href="/produtos/new" class="btn btn-primary">Novo Produto</a>
+<table class="table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Referência</th>
+        <th>Descrição</th>
+        <th>Quantidade</th>
+        <th>Preço</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="produto : ${produtos}">
+        <td th:text="${produto.id}"></td>
+        <td th:text="${produto.referencia}"></td>
+        <td th:text="${produto.descricao}"></td>
+        <td th:text="${produto.quantidade}"></td>
+        <td th:text="${#numbers.formatCurrency(produto.preco)}"></td>
+        <td>
+            <a th:href="@{/produtos/edit/{id}(id=${produto.id})}" class="btn btn-info">Editar</a>
+            <a th:href="@{/produtos/delete/{id}(id=${produto.id})}" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este produto?');">Excluir</a>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(produtos)}">
+        <td colspan="6">Nenhum produto cadastrado.</td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Lista de Pagamentos</h2>
+<a href="/pagamentos/new" class="btn btn-primary">Novo Pagamento</a>
+<table class="table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Tipo de Pagamento</th>
+    <th>Ações</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="pagamento : ${pagamentos}">
+    <td th:text="${pagamento.id}"></td>
+    <td th:text="${pagamento.pagamento}"></td>
+    <td>
+      <a th:href="@{/pagamentos/edit/{id}(id=${pagamento.id})}" class="btn btn-info">Editar</a>
+      <a th:href="@{/pagamentos/delete/{id}(id=${pagamento.id})}" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este pagamento?');">Excluir</a>
+    </td>
+  </tr>
+  <tr th:if="${#lists.isEmpty(pagamentos)}">
+    <td colspan="3">Nenhum tipo de pagamento cadastrado.</td>
+  </tr>
+  </tbody>
+</table>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
