@@ -64,13 +64,24 @@
 </form>
 
 <script th:inline="javascript">
-  // Script para adicionar e remover dinamicamente itens de venda no formulário
+  // Injeta a lista de produtos do modelo Thymeleaf diretamente no JavaScript
+  // Isso permite que o JS acesse os dados dos produtos para preencher os dropdowns dinamicamente.
+  // Usando a sintaxe de comentário natural do Thymeleaf para garantir a serialização correta para JSON.
+  const allProducts = /*[[${produtos}]]*/ [];
+
   document.addEventListener('DOMContentLoaded', function() {
       const addItemBtn = document.getElementById('addItemBtn');
       const itensVendaContainer = document.getElementById('itensVendaContainer');
-      let itemIndex = [[${#lists.size(venda.itensVenda)}]]; // Começa com o próximo índice disponível
+      // Inicializa itemIndex com o tamanho da lista de itens de venda, ou 0 se for nula/vazia.
+      let itemIndex = /*[[${#lists.size(venda.itensVenda) != null ? #lists.size(venda.itensVenda) : 0}]]*/ 0;
 
       addItemBtn.addEventListener('click', function() {
+          // Constrói as opções do dropdown de produtos dinamicamente usando a lista `allProducts`
+          let productOptionsHtml = '<option value="">Selecione um produto</option>';
+          allProducts.forEach(product => {
+              productOptionsHtml += `<option value="${product.id}">${product.descricao} (Estoque: ${product.quantidade})</option>`;
+          });
+
           const newItemHtml = `
               <div class="item-venda-group">
                   <input type="hidden" name="itensVenda[${itemIndex}].id" value="" />
@@ -80,9 +91,7 @@
                   <div class="form-group">
                       <label for="produto${itemIndex}">Produto:</label>
                       <select id="produto${itemIndex}" name="itensVenda[${itemIndex}].produto.id" class="form-control">
-                          <option value="">Selecione um produto</option>
-                          <option th:each="produtoOpt : ${produtos}" th:value="${produtoOpt.id}" th:text="${produtoOpt.descricao + ' (Estoque: ' + produtoOpt.quantidade + ')'}"></option>
-                      </select>
+                          ${productOptionsHtml} </select>
                   </div>
 
                   <div class="form-group">
@@ -99,11 +108,6 @@
           const newItemGroup = tempDiv.firstElementChild;
           itensVendaContainer.appendChild(newItemGroup);
 
-          // Re-inicializa o Thymeleaf para processar os novos elementos (se necessário, mas geralmente não para campos simples)
-          // Para tornar as opções de produto dinâmicas, você precisaria de uma chamada AJAX ou injetar todos os produtos no JS.
-          // Por simplicidade, as opções de produto são carregadas estaticamente no template inicial.
-          // Se o usuário adicionar um item, as opções de produto já estarão disponíveis no select.
-
           itemIndex++; // Incrementa o índice para o próximo item
           attachRemoveListeners(); // Anexa listeners aos novos botões de remoção
       });
@@ -113,7 +117,7 @@
           document.querySelectorAll('.remove-item-btn').forEach(button => {
               button.onclick = function() {
                   this.closest('.item-venda-group').remove();
-                  // Reindexar os campos após a remoção (opcional, mas boa prática para evitar lacunas nos índices)
+                  // Reindexar os campos após a remoção para garantir que os índices sejam contínuos
                   reindexItems();
               };
           });
@@ -126,11 +130,13 @@
           itemGroups.forEach((group, newIndex) => {
               group.querySelectorAll('[name^="itensVenda"]').forEach(input => {
                   const oldName = input.getAttribute('name');
+                  // Atualiza o índice no atributo 'name' (ex: itensVenda[0].id -> itensVenda[newIndex].id)
                   const newName = oldName.replace(/itensVenda\[\d+\]/, `itensVenda[${newIndex}]`);
                   input.setAttribute('name', newName);
               });
               group.querySelectorAll('[id^="produto"], [id^="quantidade"]').forEach(input => {
                   const oldId = input.getAttribute('id');
+                  // Atualiza o índice no atributo 'id'
                   const newId = oldId.replace(/\d+/, `${newIndex}`);
                   input.setAttribute('id', newId);
               });

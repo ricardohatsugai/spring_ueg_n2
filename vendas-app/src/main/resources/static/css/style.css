@@ -17,7 +17,7 @@ body {
 
 header {
     background-color: #2c3e50; /* Azul escuro */
-    color: white;
+    color: white; /* This sets the default color for elements inside header, but links might override */
     padding: 15px 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
@@ -28,8 +28,9 @@ header h1 {
     font-size: 1.8em;
 }
 
+/* ALTERAÇÃO AQUI: Garante que o link dentro de h1 no cabeçalho seja branco */
 header h1 a {
-    color: white;
+    color: white !important; /* Adicionado !important para forçar a cor branca */
     text-decoration: none;
 }
 
@@ -102,6 +103,7 @@ h2 {
 
 .btn-secondary { background-color: #95a5a6; } /* Cinza */
 .btn-secondary:hover { background-color: #7f8c8d; }
+
 
 /* Estilos para tabelas */
 .table {
