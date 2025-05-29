@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Formulário de Pagamento</h2>
+<form th:action="@{/pagamentos/save}" th:object="${pagamentoForm}" method="post" class="form-container">
+  <input type="hidden" th:field="*{id}" />
+
+  <div class="form-group">
+    <label for="pagamento">Tipo de Pagamento:</label>
+    <input type="text" id="pagamento" th:field="*{pagamento}" class="form-control" />
+    <span th:if="${#fields.hasErrors('pagamento')}" th:errors="*{pagamento}" class="text-danger"></span>
+  </div>
+
+  <button type="submit" class="btn btn-success">Salvar</button>
+  <a href="/pagamentos" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
+    

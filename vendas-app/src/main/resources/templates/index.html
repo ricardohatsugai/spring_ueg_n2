@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="welcome-section">
+  <h2>Bem-vindo ao Sistema de Gestão de Vendas!</h2>
+  <p>Utilize o menu de navegação acima para gerenciar clientes, produtos, pagamentos e vendas.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3><a href="/clientes">Gerenciar Clientes</a></h3>
+      <p>Adicione, edite ou visualize informações de seus clientes.</p>
+    </div>
+    <div class="card">
+      <h3><a href="/produtos">Gerenciar Produtos</a></h3>
+      <p>Controle o estoque e os preços dos seus produtos.</p>
+    </div>
+    <div class="card">
+      <h3><a href="/pagamentos">Gerenciar Pagamentos</a></h3>
+      <p>Configure os métodos de pagamento aceitos.</p>
+    </div>
+    <div class="card">
+      <h3><a href="/vendas">Gerenciar Vendas</a></h3>
+      <p>Registre e acompanhe todas as suas transações de vendas.</p>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

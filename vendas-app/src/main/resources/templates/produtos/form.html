@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Formulário de Produto</h2>
+<form th:action="@{/produtos/save}" th:object="${produto}" method="post" class="form-container">
+  <input type="hidden" th:field="*{id}" />
+
+  <div class="form-group">
+    <label for="referencia">Referência:</label>
+    <input type="text" id="referencia" th:field="*{referencia}" class="form-control" />
+    <span th:if="${#fields.hasErrors('referencia')}" th:errors="*{referencia}" class="text-danger"></span>
+  </div>
+
+  <div class="form-group">
+    <label for="descricao">Descrição:</label>
+    <input type="text" id="descricao" th:field="*{descricao}" class="form-control" />
+    <span th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}" class="text-danger"></span>
+  </div>
+
+  <div class="form-group">
+    <label for="quantidade">Quantidade:</label>
+    <input type="number" id="quantidade" th:field="*{quantidade}" class="form-control" />
+    <span th:if="${#fields.hasErrors('quantidade')}" th:errors="*{quantidade}" class="text-danger"></span>
+  </div>
+
+  <div class="form-group">
+    <label for="preco">Preço:</label>
+    <input type="number" id="preco" th:field="*{preco}" class="form-control" step="0.01" />
+    <span th:if="${#fields.hasErrors('preco')}" th:errors="*{preco}" class="text-danger"></span>
+  </div>
+
+  <button type="submit" class="btn btn-success">Salvar</button>
+  <a href="/produtos" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

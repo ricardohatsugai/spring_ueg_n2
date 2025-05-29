@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Lista de Vendas</h2>
+<a href="/vendas/new" class="btn btn-primary">Nova Venda</a>
+<table class="table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Data</th>
+    <th>Cliente</th>
+    <th>Pagamento</th>
+    <th>Total</th>
+    <th>Observação</th>
+    <th>Itens da Venda</th>
+    <th>Ações</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="venda : ${vendas}">
+    <td th:text="${venda.id}"></td>
+    <td th:text="${#temporals.format(venda.data, 'dd/MM/yyyy')}"></td>
+    <td th:text="${venda.cliente.nome}"></td>
+    <td th:text="${venda.pagamento.pagamento}"></td>
+    <td th:text="${#numbers.formatCurrency(venda.total)}"></td>
+    <td th:text="${venda.observacao}"></td>
+    <td>
+      <ul th:if="${venda.itensVenda != null and not #lists.isEmpty(venda.itensVenda)}">
+        <li th:each="item : ${venda.itensVenda}">
+          <span th:text="${item.produto.descricao}"></span> - <span th:text="${item.quantidade}"></span>x - <span th:text="${#numbers.formatCurrency(item.valorTotal)}"></span>
+        </li>
+      </ul>
+      <span th:unless="${venda.itensVenda != null and not #lists.isEmpty(venda.itensVenda)}">Nenhum item</span>
+    </td>
+    <td>
+      <a th:href="@{/vendas/edit/{id}(id=${venda.id})}" class="btn btn-info">Editar</a>
+      <a th:href="@{/vendas/delete/{id}(id=${venda.id})}" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta venda?');">Excluir</a>
+    </td>
+  </tr>
+  <tr th:if="${#lists.isEmpty(vendas)}">
+    <td colspan="8">Nenhuma venda cadastrada.</td>
+  </tr>
+  </tbody>
+</table>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

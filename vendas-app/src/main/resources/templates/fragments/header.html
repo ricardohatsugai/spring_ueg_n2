@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Vendas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:fragment="header">
+    <nav>
+        <div class="container">
+            <a href="/"><h1>Sistema de Vendas</h1></a>
+            <ul>
+                <li><a href="/clientes">Clientes</a></li>
+                <li><a href="/produtos">Produtos</a></li>
+                <li><a href="/pagamentos">Pagamentos</a></li>
+                <li><a href="/vendas">Vendas</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<main class="container">
+    <div th:if="${message}" class="alert alert-success">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <p th:text="${errorMessage}"></p>
+    </div>
