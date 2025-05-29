@@ -3,8 +3,7 @@ package br.rep.trindade.vendas_app.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotNull;
+import lombok.NoArgsConstructor; import jakarta.validation.constraints.NotNull; // Removido, pois o total é calculado
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
@@ -25,8 +24,6 @@ public class Venda {
     @Column(nullable = false)
     private LocalDate data;
 
-    /* @ManyToOne indica um relacionamento muitos-para-um (muitas vendas para um cliente).
-     * @JoinColumn especifica a coluna de junção (chave estrangeira). */
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
     @NotNull(message = "O cliente é obrigatório para a venda.")
@@ -38,17 +35,13 @@ public class Venda {
     private Pagamento pagamento;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    @NotNull(message = "O total da venda é obrigatório.")
+    // @NotNull(message = "O total da venda é obrigatório.") // REMOVIDO: O total é calculado no serviço, não é um campo de entrada direta do formulário.
     @PositiveOrZero(message = "O total da venda não pode ser negativo.")
     private BigDecimal total;
 
     @Column(length = 500)
     private String observacao;
 
-    /* @OneToMany indica um relacionamento um-para-muitos (uma venda tem muitos itens de venda).
-     * mappedBy aponta para o campo que possui o relacionamento na entidade ItemVenda.
-     * CascadeType.ALL significa que operações (persist, merge, remove) em Venda serão propagadas para ItemVenda.
-     * orphanRemoval = true remove itens de venda órfãos (que não estão mais associados a uma venda). */
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemVenda> itensVenda;
 }
