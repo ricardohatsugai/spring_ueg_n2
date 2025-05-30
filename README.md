@@ -23,7 +23,7 @@
   </li>
 </ul>
 <br>
-<h2 align="center">Trabalho de N2 de Programação Web</h2>
+<h2 align="center">Trabalho de N2 de Programação Web   <img src="./imagens/images.jpg" align="center"></h2>
 <h2 align="center"><strong>Estrutura de diretórios</strong></h2>
 <p align="center"><img src="./imagens/tree1.jpg"  style="width:50%;height:50%;"></p>
 <p align="center"><img src="./imagens/tree2.jpg"  style="width:50%;height:50%;"></p>
